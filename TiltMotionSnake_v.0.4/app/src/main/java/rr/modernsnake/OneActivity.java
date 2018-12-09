@@ -1,7 +1,6 @@
 package rr.modernsnake;
 
 //Import files needed to run the program
-import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -11,7 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
 import rr.modernsnake.engine.GameEngine;
@@ -23,13 +21,13 @@ import static rr.modernsnake.enums.Direction.North;
 import static rr.modernsnake.enums.Direction.South;
 import static rr.modernsnake.enums.Direction.West;
 
-public class MainActivity extends AppCompatActivity implements View.OnTouchListener{
+public class OneActivity extends AppCompatActivity implements View.OnTouchListener{
 
 
     private GameEngine gameEngine;
     private SnakeView snakeView;
     private final Handler handler = new Handler();
-    private final long updateDelay = 150; // Determines the speed of the snake
+    private final long updateDelay = 100; // Determines the speed of the snake
 
     private float prevX, prevY;
     private SensorManager sensorManager;
@@ -39,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_one);
 
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         gyroscopeSensor = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
@@ -48,31 +46,19 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             Toast.makeText(this,"The device has no gyroscope sensor", Toast.LENGTH_SHORT).show();
 
         }
-        Button toGameActivity = (Button) findViewById(R.id.StartGame);
-        toGameActivity.setOnClickListener(new View.OnClickListener()
-        {
-            public void onClick(View v)
-            {
-                gameEngine = new GameEngine();
-                gameEngine.initGame();
-                snakeView = (SnakeView) findViewById(R.id.snakeView);
-                startUpdateHandler();
-                v.setVisibility(View.GONE); // Makes the start button disappear  <not determined>
-            }
-        });
 
         gyroscopeEventListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
                 if(gameEngine!=null) //
                 {
-                    if (sensorEvent.values[0] > .5f && sensorEvent.values[1] < sensorEvent.values[0]) {
+                    if (sensorEvent.values[0] > 1f && sensorEvent.values[1] < sensorEvent.values[0]) {
                         gameEngine.UpdateDirection(South);
-                    } else if (sensorEvent.values[0] < -.5f && sensorEvent.values[1] > sensorEvent.values[0]) {
+                    } else if (sensorEvent.values[0] < -1f && sensorEvent.values[1] > sensorEvent.values[0]) {
                         gameEngine.UpdateDirection(North);
-                    } else if (sensorEvent.values[1] > .5f && sensorEvent.values[1] > sensorEvent.values[0]) {
+                    } else if (sensorEvent.values[1] > 1f && sensorEvent.values[1] > sensorEvent.values[0]) {
                         gameEngine.UpdateDirection(East);
-                    } else if (sensorEvent.values[1] < -.5f && sensorEvent.values[1] < sensorEvent.values[0]) {
+                    } else if (sensorEvent.values[1] < -1f && sensorEvent.values[1] < sensorEvent.values[0]) {
                         gameEngine.UpdateDirection((West));
                     }
                 }
@@ -83,15 +69,16 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
             }
         };
-
-
-
+        gameEngine = new GameEngine();
+        gameEngine.initGame();
+        snakeView = (SnakeView) findViewById(R.id.snakeView);
+        startUpdateHandler();
     }
 
     @Override
     protected void onResume(){
         super.onResume();
-        sensorManager.registerListener(gyroscopeEventListener, gyroscopeSensor, SensorManager.SENSOR_DELAY_FASTEST);
+        sensorManager.registerListener(gyroscopeEventListener, gyroscopeSensor, SensorManager.SENSOR_DELAY_GAME);
     }
     @Override
     protected void onPause(){

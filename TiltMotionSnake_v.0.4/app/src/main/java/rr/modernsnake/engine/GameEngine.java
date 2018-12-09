@@ -59,7 +59,6 @@ public class GameEngine {
         for(Coordinate w: walls){
             if(snake.get(0).equals(w)){
                 currentGameState = GameState.Lost;
-                score = 0; // Resets the score
             }
         }
 
@@ -104,7 +103,7 @@ public class GameEngine {
         if(increaseWall == 2) //When the snake eats n number of apples, the number of walls increase
         {
             increaseWall = 0; // Resets the parameter
-            for(int i = 0; i < 4; i++) // Adds i amount of walls
+            for(int i = 0; i < 3; i++) // Adds i amount of walls
                 randomWall(); // Adds the new random wall into the game
         }
 
