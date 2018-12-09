@@ -42,7 +42,7 @@ public class SnakeView extends View {
                             mPaint.setColor(Color.WHITE);
                             break;
                         case Wall:
-                            mPaint.setColor(Color.GREEN);
+                            mPaint.setColor(Color.GRAY);
                             break;
                         case SnakeHead:
                             mPaint.setColor(Color.RED);
