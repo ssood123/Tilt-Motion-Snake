@@ -36,7 +36,7 @@ public class SnakeView extends View {
 
             for(int x = 0; x < snakeViewMap.length; x++){
                 for(int y = 0; y < snakeViewMap[x].length; y++){
-                    switch (snakeViewMap[x][y]){
+                    switch (snakeViewMap[x][y]){ // Declares the color of the objects in the game
 
                         case Nothing:
                             mPaint.setColor(Color.WHITE);

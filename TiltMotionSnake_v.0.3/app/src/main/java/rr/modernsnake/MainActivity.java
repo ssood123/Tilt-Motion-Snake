@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import rr.modernsnake.engine.GameEngine;
@@ -28,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
     private GameEngine gameEngine;
     private SnakeView snakeView;
     private final Handler handler = new Handler();
-    private final long updateDelay = 500; // Determines the speed of the snake
+    private final long updateDelay = 150; // Determines the speed of the snake
 
     private float prevX, prevY;
     private SensorManager sensorManager;
@@ -47,20 +48,33 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
             Toast.makeText(this,"The device has no gyroscope sensor", Toast.LENGTH_SHORT).show();
 
         }
+        Button toGameActivity = (Button) findViewById(R.id.StartGame);
+        toGameActivity.setOnClickListener(new View.OnClickListener()
+        {
+            public void onClick(View v)
+            {
+                gameEngine = new GameEngine();
+                gameEngine.initGame();
+                snakeView = (SnakeView) findViewById(R.id.snakeView);
+                startUpdateHandler();
+                v.setVisibility(View.GONE); // Makes the start button disappear  <not determined>
+            }
+        });
+
         gyroscopeEventListener = new SensorEventListener() {
             @Override
             public void onSensorChanged(SensorEvent sensorEvent) {
-                if(sensorEvent.values[0] > .75f){
-                    gameEngine.UpdateDirection(South);
-                }
-                else if(sensorEvent.values[0] < -.75f ){
-                    gameEngine.UpdateDirection(North);
-                }
-                else if(sensorEvent.values[1] > .75){
-                    gameEngine.UpdateDirection(East);
-                }
-                else if(sensorEvent.values[1] < -.75){
-                    gameEngine.UpdateDirection((West));
+                if(gameEngine!=null) //
+                {
+                    if (sensorEvent.values[0] > .5f && sensorEvent.values[1] < sensorEvent.values[0]) {
+                        gameEngine.UpdateDirection(South);
+                    } else if (sensorEvent.values[0] < -.5f && sensorEvent.values[1] > sensorEvent.values[0]) {
+                        gameEngine.UpdateDirection(North);
+                    } else if (sensorEvent.values[1] > .5f && sensorEvent.values[1] > sensorEvent.values[0]) {
+                        gameEngine.UpdateDirection(East);
+                    } else if (sensorEvent.values[1] < -.5f && sensorEvent.values[1] < sensorEvent.values[0]) {
+                        gameEngine.UpdateDirection((West));
+                    }
                 }
             }
 
@@ -71,10 +85,7 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
         };
 
 
-        gameEngine = new GameEngine();
-        gameEngine.initGame();
-        snakeView = (SnakeView)findViewById(R.id.snakeView);
-        startUpdateHandler();
+
     }
 
     @Override
@@ -107,7 +118,8 @@ public class MainActivity extends AppCompatActivity implements View.OnTouchListe
 
     }
     private void OnGameLost(){ // What happens when you lose
-        Toast.makeText(this, "You Lost.", Toast.LENGTH_SHORT).show(); // Shows the lost message
+        String text = "You lost with " + String.valueOf(gameEngine.score) + " points.";
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show(); // Shows the lost message
 
     }
 

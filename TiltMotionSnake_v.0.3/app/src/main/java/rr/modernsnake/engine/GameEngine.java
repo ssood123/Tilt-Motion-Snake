@@ -10,8 +10,8 @@ import rr.modernsnake.enums.GameState;
 import rr.modernsnake.enums.TileType;
 
 public class GameEngine {
-    public static final int GameWidth = 20; //Width of the game window
-    public static final int GameHeight = 40;//Height of the game window
+    public static final int GameWidth = 30; //Width of the game window
+    public static final int GameHeight = 60;//Height of the game window
 
     private List<Coordinate> walls = new ArrayList<>(); // Creates wall objects
     private List<Coordinate> snake = new ArrayList<>(); // Creates the snake object
@@ -19,6 +19,8 @@ public class GameEngine {
 
     private Random random = new Random(); // Creates a random variable
     private boolean increaseTail = false;
+    private int increaseWall = 0; // Determines if a new wall should be added
+    public int score = 0; //Keeps the score count
 
     private Direction currentDirection = Direction.East; // Snake moves east initially
     private GameState currentGameState = GameState.Running; // Game starts
@@ -31,10 +33,10 @@ public class GameEngine {
 
     }
     public void initGame(){
-
+        currentGameState = GameState.Running;
         AddSnake(); // Creates the snake object
         AddWalls(); // Creates the walls around the phone
-        AddApples();
+        AddApples(); // Adds apples
     }
 
     public void Update(){ // This function allows the snake to move around
@@ -57,6 +59,7 @@ public class GameEngine {
         for(Coordinate w: walls){
             if(snake.get(0).equals(w)){
                 currentGameState = GameState.Lost;
+                score = 0; // Resets the score
             }
         }
 
@@ -78,23 +81,33 @@ public class GameEngine {
         if(appleToRemove != null){
             apples.remove(appleToRemove); // Removes the eaten apple
             AddApples();  // Adds a new apple
+            increaseWall++;
+            score += 1; // Each apple is worth 1 point
         }
     }
 
-    private void UpdateSnake(int x, int y){
-        int newX = snake.get(snake.size() - 1).getX();
-        int newY = snake.get(snake.size() - 1).getY();
+    private void UpdateSnake(int x, int y){ // Updates the game after they delay
+        int newX = snake.get(snake.size() - 1).getX(); // Determines the x position of the added body
+        int newY = snake.get(snake.size() - 1).getY(); // Determines the y position of the new body
 
-        for(int i = snake.size() -1; i > 0; i--)
+        for(int i = snake.size() -1; i > 0; i--) // Moves the snake
         {
-            snake.get(i).setX(snake.get(i-1).getX());
-            snake.get(i).setY(snake.get(i-1).getY());
+            snake.get(i).setX(snake.get(i-1).getX()); // Changes the x position of the body
+            snake.get(i).setY(snake.get(i-1).getY()); // Changes the y position of the body
         }
 
         if(increaseTail){ // Increases the tail after moving the snake body
             snake.add(new Coordinate(newX, newY)); // Adds the new snake body at the newx, new y position
             increaseTail = false; // Restart the growing
+
         }
+        if(increaseWall == 2) //When the snake eats n number of apples, the number of walls increase
+        {
+            increaseWall = 0; // Resets the parameter
+            for(int i = 0; i < 4; i++) // Adds i amount of walls
+                randomWall(); // Adds the new random wall into the game
+        }
+
 
         snake.get(0).setX(snake.get(0).getX() + x); // Declares the head  coordinate
         snake.get(0).setY(snake.get(0).getY() + y); // Declares the head coordinate
@@ -163,7 +176,42 @@ public class GameEngine {
         }
     }
 
-    private void AddApples(){
+    private void randomWall(){ //Add random walls to the game after the parameter is met
+        Coordinate coordinate = null;
+        boolean added = false; // Decides when to add the apple
+
+        while(!added) { // Prevents an wall from spawning inside the snake or another wall
+            int x = 1 + random.nextInt(GameWidth - 2); // Away from the outer walls
+            int y = 1 + random.nextInt(GameHeight - 2); // Away from the outer walls
+
+            coordinate = new Coordinate(x,y);
+            boolean collision = false; // Declares boolean variable
+
+            for(Coordinate s:snake){ // Checks if the new wall is inside the snake
+                if(s.equals(coordinate)){
+                    collision = true;
+                    break;
+                }
+            }
+
+            for(Coordinate a:apples){ // Checks if the new wall is inside an apple
+                if(a.equals(coordinate)){
+                    collision = true;
+                    break;
+                }
+            for(Coordinate w:walls){ // Checks if there is a wall
+                    if(w.equals(coordinate)){
+                        collision = true;
+                        break;
+                    }
+                }
+            }
+            added = !collision; // Keep going until an empty or already declared wall is found
+        }
+        walls.add(coordinate); // Adds the random wall to the map
+
+    }
+    private void AddApples(){ // Adds apple to the game
         Coordinate coordinate = null;
 
         boolean added = false;
@@ -188,9 +236,15 @@ public class GameEngine {
                     break;
                 }
             }
+            for(Coordinate w:walls){ // Checks if there is a wall
+                if(w.equals(coordinate)){
+                    collision = true;
+                    break;
+                }
+            }
             added = !collision;
         }
-        apples.add(coordinate);
+        apples.add(coordinate); // Adds an apple to the map
     }
 
     public GameState getCurrentGameState(){ // Gets the current game state
