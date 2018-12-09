@@ -98,32 +98,11 @@ public class GameEngineTwo {
         }
 
         for(int i = 1; i < snake2.size(); i++){ // Same as above, but for the second snake
-            if(getSnakeHead2().equals(snake2.get(i))){ // Snake collision to itself
+            if(getSnakeHead().equals(snake2.get(i))){ // Snake collision to itself
                 currentGameState = GameState.Lost2; // Game lost
                 return;
             }
         }
-
-        for(int i = 1; i < snake2.size(); i++){ // Checks if the first snake hits the body of the other snake
-            if(getSnakeHead().equals(snake2.get(i))){
-                currentGameState = GameState.Lost; // Snake one loses
-                return;
-            }
-        }
-
-        for(int i = 1; i < snake.size(); i++){ // Checks if the 2nd snake hits the body of the other snake
-            if(getSnakeHead2().equals(snake.get(i))){
-                currentGameState = GameState.Lost; // Snake two loses
-                return;
-            }
-        }
-
-        if(getSnakeHead2().equals(getSnakeHead())) // It's a draw
-        {
-            currentGameState = GameState.Draw;
-            return;
-        }
-
 
         //Check apples
         Coordinate appleToRemove = null;

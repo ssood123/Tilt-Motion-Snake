@@ -20,8 +20,7 @@
         <activity android:name=".OneActivity" android:screenOrientation = "portrait"/>
         <activity android:name=".TwoActivity" android:screenOrientation = "portrait"/>
         <activity android:name=".ThreeActivity" android:screenOrientation = "portrait"/>
-        <activity android:name=".EndActivity" android:screenOrientation="portrait"/>
-        <activity android:name=".EndActivityTwo" android:screenOrientation="portrait"/>
+        <activity android:name=".EndActivity"/>
 
     </application>
 

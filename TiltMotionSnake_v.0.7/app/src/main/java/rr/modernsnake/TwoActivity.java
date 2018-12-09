@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.view.View.OnClickListener;
@@ -29,13 +30,10 @@ public class TwoActivity extends AppCompatActivity implements OnClickListener{
     private Button leftOne;
     private Button leftTwo;
 
-    private int index;
-    private int index2;
-
     private GameEngineTwo gameEngineTwo; // Creates the GameEngineTwo object
     private SnakeView snakeView; // Starts making the game map
     private final Handler handler = new Handler();
-    private final long updateDelay = 200; // Determines the speed of the snake
+    private final long updateDelay = 150; // Determines the speed of the snake
 
     public static String scoreMessage = ""; // Blank String
 
@@ -65,10 +63,10 @@ public class TwoActivity extends AppCompatActivity implements OnClickListener{
 
 
         // Starts the game engine
-        gameEngineTwo = new GameEngineTwo(); // Creates the second engine
-        gameEngineTwo.initGame(); // Creates the objects
-        snakeView = (SnakeView) findViewById(R.id.snakeView); // Creates the map
-        startUpdateHandler(); // Start updating
+        gameEngineTwo = new GameEngineTwo();
+        gameEngineTwo.initGame();
+        snakeView = (SnakeView) findViewById(R.id.snakeView);
+        startUpdateHandler();
     }
 
     private void startUpdateHandler(){
@@ -77,48 +75,16 @@ public class TwoActivity extends AppCompatActivity implements OnClickListener{
             public void run(){
                 gameEngineTwo.Update();
 
-                if(gameEngineTwo.getCurrentGameState() == GameState.Running) {
-                    if (index == 0) {
-                        gameEngineTwo.UpdateDirection(North);
-                    }
-                    if (index == 1) {
-                        gameEngineTwo.UpdateDirection(East);
-                    }
-                    if (index == 2) {
-                        gameEngineTwo.UpdateDirection(South);
-                    }
-                    if (index == 3) {
-                        gameEngineTwo.UpdateDirection(West);
-                    }
-                    if (index2 == 0) {
-                        gameEngineTwo.UpdateDirection(North);
-                    }
-                    if (index2 == 1) {
-                        gameEngineTwo.UpdateDirection(East);
-                    }
-                    if (index2 == 2) {
-                        gameEngineTwo.UpdateDirection(South);
-                    }
-                    if (index2 == 3) {
-                        gameEngineTwo.UpdateDirection(West);
-                    }
-
-                    handler.postDelayed(this, updateDelay);
+                if(gameEngineTwo.getCurrentGameState() == GameState.Running){
+                    handler.postDelayed(this, updateDelay );
                 }
-
 
                 if(gameEngineTwo.getCurrentGameState() == GameState.Lost){
                     OnGameLost(1);
                 }
-
                 if(gameEngineTwo.getCurrentGameState() == GameState.Lost2){
                     OnGameLost(2);
                 }
-
-                if(gameEngineTwo.getCurrentGameState() == GameState.Draw){
-                    OnGameLost(0);
-                }
-
                 snakeView.setSnakeViewMap(gameEngineTwo.getMap());
                 snakeView.invalidate();
             }
@@ -132,12 +98,8 @@ public class TwoActivity extends AppCompatActivity implements OnClickListener{
         else if(player == 2){ // Player two lost
             scoreMessage = "Player one won with " + String.valueOf(gameEngineTwo.score2) + " points.";
         }
-        else if(player == 0){
-            scoreMessage = "It's a draw.";
-        }
-        Intent endActivityTwo = new Intent(TwoActivity.this, EndActivityTwo.class); // Creates object intent to launch a new activity
-        startActivity(endActivityTwo); // Launches the new activity
-        finish();
+        Intent endActivity = new Intent(TwoActivity.this, EndActivity.class); // Creates object intent to launch a new activity
+        startActivity(endActivity); // Launches the new activity
 
 
     }
@@ -147,43 +109,42 @@ public class TwoActivity extends AppCompatActivity implements OnClickListener{
         return scoreMessage;
     }
 
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) // Gets the id of the button pressed
         {
             case R.id.up: {
-                index=2;
+                gameEngineTwo.UpdateDirection(South);
                 break;
             }
             case R.id.right: {
-                index=3;
+                gameEngineTwo.UpdateDirection(West);
                 break;
             }
             case R.id.down: {
-                index=0;
+                gameEngineTwo.UpdateDirection(North);
                 break;
             }
             case R.id.left: {
-                index=1;
+                gameEngineTwo.UpdateDirection(East);
                 break;
             }
 
             // Directions for the second snake
             case R.id.up2: {
-                index2=0;
+                gameEngineTwo.UpdateDirection2(North);
                 break;
             }
             case R.id.right2: {
-                index2=1;
+                gameEngineTwo.UpdateDirection2(East);
                 break;
             }
             case R.id.down2: {
-                index2=2;
+                gameEngineTwo.UpdateDirection2(South);
                 break;
             }
             case R.id.left2: {
-                index=3;
+                gameEngineTwo.UpdateDirection2(West);
                 break;
             }
         }

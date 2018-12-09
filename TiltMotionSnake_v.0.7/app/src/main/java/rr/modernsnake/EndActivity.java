@@ -8,8 +8,9 @@ import android.widget.Button;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
 
-public class EndActivityTwo extends AppCompatActivity implements OnClickListener {
+public class EndActivity extends AppCompatActivity implements OnClickListener {
 
     private Button backtostart; // Declares a button for the start screen
     private Button backtogame; // Declares a button to restart the game
@@ -22,7 +23,7 @@ public class EndActivityTwo extends AppCompatActivity implements OnClickListener
         setContentView(R.layout.activity_results);
 
         scoreScreen = (TextView) findViewById(R.id.Score);
-        scoreScreen.setText(TwoActivity.getScore());
+        scoreScreen.setText(OneActivity.getScore());
         //Creates a button that leads to MainActivity (the start screen)
         backtostart = (Button) findViewById(R.id.backToMain);
         backtostart.setOnClickListener(this);
@@ -43,7 +44,7 @@ public class EndActivityTwo extends AppCompatActivity implements OnClickListener
                 break;
             }
             case R.id.backToGame : { // If backToGame button is pressed
-                launchGame();
+                launchGameOne();
                 break;
             }
 
@@ -51,17 +52,15 @@ public class EndActivityTwo extends AppCompatActivity implements OnClickListener
         }
     }
 
-    private void launchGame() // Launches the game activity
+    private void launchGameOne() // Launches the game activity
     {
-        Intent twoActivity = new Intent(EndActivityTwo.this, TwoActivity.class); // Creates object intent to launch a new activity
-        startActivity(twoActivity); // Launches the new activity
-        finish();
+        Intent oneActivity = new Intent(EndActivity.this, OneActivity.class); // Creates object intent to launch a new activity
+        startActivity(oneActivity); // Launches the new activity
     }
 
     private void launchMain() // Launches the main activity (intro)
     {
-        Intent introActivity = new Intent(EndActivityTwo.this, IntroActivity.class); // Creates object intent to launch a new activity
+        Intent introActivity = new Intent(EndActivity.this, IntroActivity.class); // Creates object intent to launch a new activity
         startActivity(introActivity); // Launches the new activity
-        finish();
     }
 }

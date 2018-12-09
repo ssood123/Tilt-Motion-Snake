@@ -110,7 +110,7 @@ public class ThreeActivity extends AppCompatActivity implements View.OnTouchList
         Intent endActivity = new Intent(ThreeActivity.this, EndActivity.class); // Creates object intent to launch a new activity
         scoreMessage = "You lost with " + String.valueOf(gameEngine.score) + " points.";
         startActivity(endActivity); // Launches the new activity
-        finish();
+
     }
 
     public static String getScore()

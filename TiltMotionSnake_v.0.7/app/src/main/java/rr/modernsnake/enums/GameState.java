@@ -5,6 +5,5 @@ public enum GameState { // States of the game. This where we will add more scree
     Ready,
     Running,
     Lost,
-    Lost2,
-    Draw
+    Lost2
 }
