@@ -24,7 +24,7 @@ public class GameEngineTwo {
     private int increaseWall = 0; // Determines if a new wall should be added
     public int score = 0; //Keeps the score count
     public int score2 = 0; // Keeps the score count for the second snake
-
+    private int gameIndex;
     private Direction currentDirection = Direction.East; // Snake moves east initially
     private  Direction currentDirection2 = Direction.East; // 2nd snakes moves east initially
 
@@ -37,7 +37,7 @@ public class GameEngineTwo {
         return snake2.get(0); // Gets the location of the head of the second snake
     }
 
-    public GameEngineTwo(){ // Creates the engine of the game
+    public GameEngineTwo(){ // Creates the engine of the game to accessible to other activities
 
     }
     public void initGame(){
@@ -83,10 +83,22 @@ public class GameEngineTwo {
         // Check wall collisions
         for(Coordinate w: walls){
             if(snake.get(0).equals(w)){ // If the third snake lose
-                currentGameState = GameState.Lost;
+                gameIndex=1+ gameIndex;
             }
             if(snake2.get(0).equals(w)){ // If the second snake lose
+                gameIndex=2+ gameIndex;
+            }
+            if(gameIndex==1){
+                currentGameState = GameState.Lost;
+            }
+            if(gameIndex==1) {
+                currentGameState = GameState.Lost;
+            }
+            if(gameIndex==2){
                 currentGameState = GameState.Lost2;
+            }
+            if(gameIndex==3){
+                currentGameState = GameState.Draw;
             }
         }
 
@@ -98,11 +110,32 @@ public class GameEngineTwo {
         }
 
         for(int i = 1; i < snake2.size(); i++){ // Same as above, but for the second snake
-            if(getSnakeHead().equals(snake2.get(i))){ // Snake collision to itself
+            if(getSnakeHead2().equals(snake2.get(i))){ // Snake collision to itself
                 currentGameState = GameState.Lost2; // Game lost
                 return;
             }
         }
+
+        for(int i = 1; i < snake2.size(); i++){ // Checks if the first snake hits the body of the other snake
+            if(getSnakeHead().equals(snake2.get(i))){
+                currentGameState = GameState.Lost; // Snake one loses
+                return;
+            }
+        }
+
+        for(int i = 1; i < snake.size(); i++){ // Checks if the 2nd snake hits the body of the other snake
+            if(getSnakeHead2().equals(snake.get(i))){
+                currentGameState = GameState.Lost; // Snake two loses
+                return;
+            }
+        }
+
+        if(getSnakeHead2().equals(getSnakeHead())) // It's a draw
+        {
+            currentGameState = GameState.Draw;
+            return;
+        }
+
 
         //Check apples
         Coordinate appleToRemove = null;
@@ -143,11 +176,10 @@ public class GameEngineTwo {
             increaseTail = false; // Restart the growing
 
         }
-        if(increaseWall == 2) //When the snake eats n number of apples, the number of walls increase
-        {
-            increaseWall = 0; // Resets the parameter
-            for(int i = 0; i < 3; i++) // Adds i amount of walls
-                randomWall(); // Adds the new random wall into the game
+        if(increaseTail2){ // Increases the tail after moving the snake body
+            snake2.add(new Coordinate(newX, newY)); // Adds the new snake body at the newx, new y position
+            increaseTail2 = false; // Restart the growing
+
         }
 
 
@@ -171,14 +203,6 @@ public class GameEngineTwo {
             increaseTail = false; // Restart the growing
 
         }
-        if(increaseWall == 2) //When the snake eats n number of apples, the number of walls increase
-        {
-            increaseWall = 0; // Resets the parameter
-            for(int i = 0; i < 3; i++) // Adds i amount of walls
-                randomWall(); // Adds the new random wall into the game
-        }
-
-
         snake2.get(0).setX(snake2.get(0).getX() + x); // Declares the head  coordinate
         snake2.get(0).setY(snake2.get(0).getY() + y); // Declares the head coordinate
 
@@ -206,15 +230,15 @@ public class GameEngineTwo {
 
     private void AddWalls(){
         //Top and Bottom Walls
-        for(int x = 0; x < GameWidth; x++)
+        for(int x = 1; x < GameWidth; x++)
         {
-            walls.add(new Coordinate(x,0)); // Creates a new wall object
+            walls.add(new Coordinate(x,1)); // Creates a new wall object
             walls.add(new Coordinate(x,GameHeight -1)); // Creates a new wall object
         }
         //Left and Right Walls
         for(int y = 1; y < GameHeight; y++)
         {
-            walls.add(new Coordinate(0,y)); // Creates a new wall object
+            walls.add(new Coordinate(1,y)); // Creates a new wall object
             walls.add(new Coordinate(GameWidth - 1, y));
 
         }
@@ -232,14 +256,14 @@ public class GameEngineTwo {
             }
         }
         for(Coordinate s : snake){ // Declares the body of the snake as a snake tail
-            map[s.getX()][s.getY()] = TileType.SnakeTail;
+            map[s.getX()][s.getY()] = TileType.SnakeTail2;
         }
-        map[snake.get(0).getX()][snake.get(0).getY()] =  TileType.SnakeHead; // The first to be head
+        map[snake.get(0).getX()][snake.get(0).getY()] =  TileType.SnakeHead2; // The first to be head
 
         for(Coordinate s2 : snake2){ // Declares the body of the second snake as a snake tail
-            map[s2.getX()][s2.getY()] = TileType.SnakeTail;
+            map[s2.getX()][s2.getY()] = TileType.SnakeTail3;
         }
-        map[snake2.get(0).getX()][snake2.get(0).getY()] =  TileType.SnakeHead; // The first to be head for the second snake
+        map[snake2.get(0).getX()][snake2.get(0).getY()] =  TileType.SnakeHead3; // The first to be head for the second snake
 
         for(Coordinate wall: walls)
         {
@@ -266,56 +290,14 @@ public class GameEngineTwo {
         }
     }
 
-    private void randomWall(){ //Add random walls to the game after the parameter is met
-        Coordinate coordinate = null;
-        boolean added = false; // Decides when to add the apple
-
-        while(!added) { // Prevents an wall from spawning inside the snake or another wall
-            int x = 1 + random.nextInt(GameWidth - 2); // Away from the outer walls
-            int y = 1 + random.nextInt(GameHeight - 2); // Away from the outer walls
-
-            coordinate = new Coordinate(x,y);
-            boolean collision = false; // Declares boolean variable
-
-            for(Coordinate s:snake){ // Checks if the new wall is inside the snake
-                if(s.equals(coordinate)){
-                    collision = true;
-                    break;
-                }
-            }
-
-            for(Coordinate s2:snake2){ // Checks if the new wall is inside the second snake
-                if(s2.equals(coordinate)){
-                    collision = true;
-                    break;
-                }
-            }
-
-            for(Coordinate a:apples){ // Checks if the new wall is inside an apple
-                if(a.equals(coordinate)){
-                    collision = true;
-                    break;
-                }
-                for(Coordinate w:walls){ // Checks if there is a wall
-                    if(w.equals(coordinate)){
-                        collision = true;
-                        break;
-                    }
-                }
-            }
-            added = !collision; // Keep going until an empty or already declared wall is found
-        }
-        walls.add(coordinate); // Adds the random wall to the map
-
-    }
     private void AddApples(){ // Adds apple to the game
         Coordinate coordinate = null;
 
         boolean added = false;
 
         while(!added) { // Prevents an apple from spawning inside the snake or wall
-            int x = 1 + random.nextInt(GameWidth - 2);
-            int y = 1 + random.nextInt(GameHeight - 2);
+            int x = 2 + random.nextInt(GameWidth - 2);
+            int y = 2 + random.nextInt(GameHeight - 2);
 
             coordinate = new Coordinate(x,y);
             boolean collision = false; // Declares boolean variable
@@ -353,6 +335,9 @@ public class GameEngineTwo {
 
     public GameState getCurrentGameState(){ // Gets the current game state
         return currentGameState;
+    }
+    public void setCurrentGameState(GameState current){ // Gets the current game state
+        currentGameState = current;
     }
 
 

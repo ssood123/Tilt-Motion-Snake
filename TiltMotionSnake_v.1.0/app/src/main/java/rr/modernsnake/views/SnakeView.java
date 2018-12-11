@@ -13,6 +13,8 @@ public class SnakeView extends View {
 
     private Paint mPaint = new Paint();
     private TileType snakeViewMap[][];
+    private int Orange = Color.rgb(255, 165,0);
+    private int Pink = Color.rgb(255, 175, 175);
 
     public SnakeView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -51,10 +53,23 @@ public class SnakeView extends View {
                             mPaint.setColor(Color.GREEN);
                             break;
                         case Apple:
+                            mPaint.setColor(Orange); // Draws the apple as oranges
+                            break;
+                        case SnakeHead2:
                             mPaint.setColor(Color.RED);
                             break;
+                        case  SnakeTail2:
+                            mPaint.setColor(Pink);
+                            break;
+                        case SnakeHead3:
+                            mPaint.setColor(Color.BLUE);
+                            break;
+                        case SnakeTail3:
+                            mPaint.setColor(Color.CYAN);
+                            break;
+
                     }
-                    canvas.drawCircle(x*tileSizeX + tileSizeX/2f + circleSize /2, y*tileSizeY + tileSizeY /2f + circleSize/2, circleSize, mPaint);
+                    canvas.drawRect(x*tileSizeX-tileSizeX/2,tileSizeY*y-tileSizeY/2,x*tileSizeX+tileSizeX/2,y*tileSizeY+tileSizeY/2, mPaint);
                 }
             }
         }

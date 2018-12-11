@@ -5,6 +5,10 @@ public enum TileType { // Objects inside of the game
     Wall,
     SnakeHead,
     SnakeTail,
+    SnakeHead2,
+    SnakeTail2,
+    SnakeHead3,
+    SnakeTail3,
     Apple,
     GoldenApple
 }
